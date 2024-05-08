@@ -12,19 +12,20 @@ class App1 extends Component {
         this.handleShow=this.handleShow.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleShow=this.handleShow.bind(this);
+        this.handleInner=this.handleInner.bind(this);
         
-        setTimeout(()=>{
-            console.log('constructor called after 4 seconds ');
-        },4000)
+        
+            console.log('constructor will be called first ... ');
+      
     }
     handleChange = (e)=>{
         this.setState({msg:e.target.value});
-        console.log('msg',this.state.msg);
+        
     }
 
     onSubmit=(e)=>{
         e.preventDefault();
-        console.log('how are you ')
+     
         this.setState({show:true});
     }
 
@@ -32,23 +33,37 @@ class App1 extends Component {
     
     componentDidMount(){
         
-        setTimeout(()=>{
-            console.log('component did mount after 4 seconds  ');
-        },4000)
+        
+            console.log('At last componentDidMount called ....');
+       
     }
     
     componentDidUpdate(){
-        setTimeout(()=>{
-            console.log('component get updated')
-       },2000)
+      
+            console.log('at last in updating component get called')
+     
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        console.log('prev',props,'current state',state);
+        console.log('getDerivedState runs after constructor in mounting and updating')
+        return props;
+      }
+
+    handleInner(e){
+        e.stopPropagation();
+        
     }
 
     shouldComponentUpdate(){
+        console.log('seconly after getsnapshot this runs ...')
         return true;
     }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
-        console.log('prevState--->',prevState.msg)
+        
+        console.log('thirdly this is called before updation it update state on basics of props value')
+        return prevState.msg
       }
 
       handleShow(){
@@ -62,22 +77,25 @@ class App1 extends Component {
 
     componentWillUnmount()
     {
-        console.log('component unmounted immediately');
+        console.log('component unmounted called at closing');
     }
     
 
     render() {
+        console.log('After Constructor & getDerivedState render is called ')
         return (
-            <div className='flex  bg-gray-400 relative h-[100vh] items-center justify-center '>
-                <div className='flex gap-2  shaodw shadow-white  px-5 py-4 rounded-md bg-orange-600'>
+            <div className='flex  bg-gray-200 relative h-[100vh] items-center justify-center '>
+                <div className=' flex gap-2  shaodw shadow-white  px-5 py-4 rounded-md bg-orange-600'>
                     <input type="text" disabled={this.state.show?true :false} className='px-2 py-1 rounded-sm focus:border-none focus:outline-none' name={this.state.msg} id="" value={this.state.msg} onChange={this.handleChange} />
                     <button className='border border-white px-2 rounded-sm text-white hover:bg-blue-500' onClick={this.onSubmit}>Show Me</button>
                    
                 </div>
                 {
-                    this.state.show &&  <div className='absolute h-[150px] w-[400px] border bg-neutral-600 px-4 py-3 flex justify-center items-center text-white text-3xl rounded-sm left-[45%] border-gray-200 top-3 '>
-                                            <div>{this.state.msg}</div>
-                                            <MdCancel size={20} className='absolute right-2 top-2' onClick={this.handleShow}/>
+                    this.state.show &&  <div className='z-[100] fixed inset-0 !mt-0 grid place-items-center overflow-auto  bg-black bg-opacity-50' onClick={this.handleShow}>
+                                            <div className='z-[200] border relative bg- opacity-80 bg-gray-700 border-blue-900 w-[500px] h-[250px] rounded-md flex flex-col gap-3  justify-center items-center' onClick={(e)=>e.stopPropagation()}>
+                                                <div className='z-20 text-3xl text-white text-semibold'>{this.state.msg}</div>
+                                                <MdCancel size={20} className='absolute right-2 top-2 text-white' onClick={this.handleShow}/>
+                                            </div>
                                         </div>
                 }
             </div>
